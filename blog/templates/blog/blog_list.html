@@ -1,0 +1,33 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    {% for single_blog in all_blogs %}
+        <article class="media content-section">
+            <img src="{{ single_blog.author.profile.image.url }}" class="rounded-circle article-img">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'blog-by-user' single_blog.author.username %}">{{ single_blog.author }}</a>
+                    <small class="text-muted">{{ single_blog.date_modified }}</small>
+                </div>
+                <h2><a class="article-title" href="{% url 'blog-detail' single_blog.slug %}">{{ single_blog.title }}</a>
+                </h2>
+                <p class="article-content">{{ single_blog.content }}</p>
+            </div>
+        </article>
+    {% endfor %}
+    {% if is_paginated %}
+        {% if page_obj.has_previous %}
+            <a href="?page=1" class="btn btn-outline-info">First</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a href="?page={{ num }}" class="btn btn-info">{{ num }}</a>
+            {% elif page_obj.number|add:'-3' < num and page_obj.number|add:'3' > num %}
+                <a href="?page={{ num }}" class="btn btn-outline-info">{{ num }}</a>
+            {% endif %}
+
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-outline-info">Last</a>
+        {% endif %}
+    {% endif %}
+{% endblock content %}
